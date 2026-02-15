@@ -1,134 +1,165 @@
-<<<<<<< Updated upstream
-import { View, Text, Pressable } from 'react-native';
-import { Link } from 'expo-router';
+import { useState } from 'react';
+import { View, Text } from 'react-native';
+import { WebView, WebViewMessageEvent } from 'react-native-webview';
 
 export default function WelcomePage() {
-=======
-import { View, Text, FlatList, TouchableOpacity, ImageBackground } from 'react-native';
+  const [country, setCountry] = useState(''); // Gestisce salvataggio nome paese selezionato
 
-export default function HomeTab() {
-  const selectedState = 'Italy';
-
-  const recipes = [
-    { id: '1', name: 'Carbonara' },
-    { id: '2', name: 'Pesto'},
-    { id: '3', name: 'Tiramisu'},
-    { id: '4', name: 'Pizza prosciutto e funghi'},
-    { id: '5', name: 'Lasagne'},
-    { id: '6', name: 'Focaccia di Recco allo stracchino'},
-    { id: '7', name: 'Gnocchi al ragù'},
-    { id: '8', name: 'Risotto alla milanese'},
-    { id: '9', name: 'Osso buco'},
-    { id: '10', name: 'Saltimbocca alla romana'},
-    { id: '11', name: 'Caponata siciliana'},
-    { id: '12', name: 'Arancini di riso'},
-  ];
-
-  const handleRecipePress = (recipe: any) => {
-    console.log('Ricetta selezionata:', recipe.name);
+  // Tramite WebViewMessageEvent salva nome paese selezionato
+  const handleMessage = (event: WebViewMessageEvent) => {
+    const countryName = event.nativeEvent.data;
+    setCountry(countryName);
   };
+  const htmlContent = `
+<!DOCTYPE html>
+<html><head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            background-color: transparent;
+            overflow: hidden;
 
-  // ---- Renderizza ogni singola ricetta ----
-  const renderRecipe = ({ item }: { item: any }) => (
-    <TouchableOpacity 
-      className="w-[48%] h-[70px] flex-row items-center px-2.5 py-2.5 rounded-2xl border border-white/30 mb-3"
-      style={{
-        // Effetto glass impossibile senza expo-blurr
-        backgroundColor: 'rgba(255, 255, 255, 0.08)', // 8% bianco opaco = finto effetto blurr
-      }}
-      onPress={() => handleRecipePress(item)}
-      activeOpacity={0.7}
-    >
-      {/* IMMAGINE - Cerchio con bordo */}
-      <View 
-        className="w-[50px] h-[50px] rounded-full justify-center items-center mr-2.5 border border-white/40"
-        style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.10)', // Sfondo cerchi, bianco 10% opaco
-        }}
-      >
-        <Text 
-          className="text-2xl"
-          style={{
-            textShadowColor: 'rgba(0, 0, 0, 0.8)', // Ombra nel cerchio
-            textShadowOffset: { width: 0, height: 1 },
-            textShadowRadius: 3,
-          }}
-        >
-          🍕 {/* --- Placeholder ---*/}
-        </Text>
-      </View>
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-      {/* NOME RICETTA */}
-      <Text 
-        className="flex-1 text-[15px] font-semibold text-white"
-        numberOfLines={2}
-        style={{
-          letterSpacing: 0.2,
-          textShadowColor: 'rgba(0, 0, 0, 0.8)',
-          textShadowOffset: { width: 0, height: 1 },
-          textShadowRadius: 4,
-        }}
-      >
-        {item.name}
-      </Text>
-    </TouchableOpacity>
-  );
+        #globeViz {
+            width: 100vw;
+            height: 100vh;
+        }
+    </style>
+    <script src="https://unpkg.com/globe.gl"></script>
+</head>
 
->>>>>>> Stashed changes
+<body>
+    <div id="globeViz"></div>
+
+    <script>
+        let selectedCountry = null;
+
+        const world = Globe()
+            (document.getElementById('globeViz'))
+            .backgroundColor('rgba(0, 0, 0, 0)')
+
+            .globeImageUrl((() => {
+                const canvas = document.createElement('canvas');
+                canvas.width = 256;
+                canvas.height = 256;
+                const ctx = canvas.getContext('2d');
+
+                const gradient = ctx.createLinearGradient(0, 0, 0, 256); // Crea un gradiente verticale
+                gradient.addColorStop(0, '#92400e'); // Posizione 0% = marrone scuro
+                gradient.addColorStop(1, '#f59e0b'); // Posizione 100% = arancione
+
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, 256, 256);
+                return canvas.toDataURL(); // Converte il contenuto del canvas in una stringa **data URL**
+            })())
+
+            // Cambio colore paese selezionato
+            .polygonCapColor((polygon) => {
+                if (selectedCountry && polygon.properties.ADMIN === selectedCountry) {
+                    return 'rgb(245, 158, 11)';
+                }
+                return 'rgb(189, 129, 58)';
+            })
+            
+            // Cambio colore bordo paese selezionato
+            .polygonStrokeColor((polygon) => {
+                if (selectedCountry && polygon.properties.ADMIN === selectedCountry) {
+                    return '#ac5b12';
+                }
+                return '#fde68a';
+            })
+            
+            // Cambio colore lati paese selezionato
+            .polygonSideColor((polygon) => {
+                if (selectedCountry && polygon.properties.ADMIN === selectedCountry) {
+                    return 'rgb(217, 119, 87)';
+                }
+                return 'rgba(0, 0, 0, 0)';
+            })
+            
+            // Il paese selezionato si solleva dalla superficie
+            .polygonAltitude((polygon) => {
+                if (selectedCountry && polygon.properties.ADMIN === selectedCountry) {
+                    return 0.02;
+                }
+                return 0.01;
+            })
+
+            // Imposta lo zoom iniziale, viene impostata anche la durata delle transizione 0 = istantaneo
+            .pointOfView({ altitude: 2 }, 0)
+
+            .onPolygonClick((polygon) => {
+                const countryName = polygon.properties.ADMIN;
+                selectedCountry = countryName;
+
+                // Trucco per forzare il re-rendering del globo e visualizzare i cambiamenti al click
+                world.polygonsData(world.polygonsData());
+
+                if (window.ReactNativeWebView) {
+                    window.ReactNativeWebView.postMessage(countryName);
+                } else {
+                    console.log("Cliccato su:", countryName);
+                }
+            });
+
+        // Dati coordinate geografiche dei confini (contiene nome del paese ADMIN, codice ISO, ecc)
+        fetch('https://raw.githubusercontent.com/vasturiano/react-globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson')
+            .then(res => res.json())
+            .then(countries => {
+                // Passando i dati a .polygonsData(), il globo sa quali poligoni disegnare sulla sfera
+                world.polygonsData(countries.features);
+
+                /* I controlli Three.js vengono inizializzati in modo asincrono, 
+                delay di 100ms garantisce che il globo sia completamente inizializzato prima di modificare i limiti di zoom
+                */
+                setTimeout(() => {
+                    const controls = world.controls();
+                    controls.minDistance = 150;
+                    controls.maxDistance = 350;
+                }, 100);
+            })
+            .catch(err => console.error("Errore caricamento GeoJSON:", err));
+
+        window.addEventListener('resize', () => {
+            world.width(window.innerWidth);
+            world.height(window.innerHeight);
+        });
+    </script>
+</body>
+
+</html>
+  `;
   return (
-    <ImageBackground 
-      source={require('../assets/scales.png')} /* SFONDO ----- */
-      className="flex-1 w-full h-full"
-      resizeMode="cover"
-    >
-      
-      {/* HEADER - Effetto vetro smerigliato */}
-      <View className="px-5 pt-5 pb-4">
-        <View 
-          className="py-3.5 px-4 rounded-2xl border border-white/30"
-          style={{
-            // Vetro smerigliato: background leggero + bordo luminoso
-            backgroundColor: 'rgba(255, 255, 255, 0.1)', // 10% bianco trasparente
-          }}
-        >
-          {/* Testo header */}
-          {/* <Text 
-            className="text-[13px] text-white font-semibold"
-            style={{
-              letterSpacing: 0.5,
-              textShadowColor: 'rgba(0, 0, 0, 0.8)',
-              textShadowOffset: { width: 0, height: 1 },
-              textShadowRadius: 4,
-            }}
-          >{/* se si vuole scrivere qualcosa prima dello stato --- 
-          </Text> */}
-          
-          {/* Nome stato */}
-          <Text 
-            className="text-[27px] text-white font-bold mt-0.5"
-            style={{
-              letterSpacing: 0.3,
-              textShadowColor: 'rgba(0, 0, 0, 0.8)',
-              textShadowOffset: { width: 0, height: 1 },
-              textShadowRadius: 4,
-            }}
-          >
-            {selectedState}
-          </Text>
-        </View>
+    <View className="flex-1">
+      <View className="basis-3/5">
+        <WebView
+          className="flex-1 bg-transparent"
+          originWhitelist={['*']} // Specifica quali origini (domini) possono essere caricate nella WebView, in questo caso accetta qualsiasi origine
+          source={{ html: htmlContent }}
+          javaScriptEnabled={true} // Abilita l'esecuzione di JS dentro la WebView, default: true su iOS, false su Android
+          domStorageEnabled={true} // Abilita il DOM Storage (localStorage e sessionStorage), permette al JS nella WebView di salvare dati localmente
+          allowUniversalAccessFromFileURLs={true} // Evita il problema del CORS
+          mixedContentMode="always" // Il "mixed content" si verifica quando una pagina HTTPS carica risorse HTTP (o viceversa)
+          onMessage={handleMessage} // Ponte di comunicazione WebView -> React Native
+          startInLoadingState={true} // Mostra automaticamente un indicatore di caricamento mentre la WebView si carica
+          scalesPageToFit={true} // su alcuni device potrebbero esserci problemi di scala quindi scalePageToFit={true} aiuta per responsive
+          onError={(syntheticEvent) => {
+            const { nativeEvent } = syntheticEvent;
+            console.warn('WebView error: ', nativeEvent);
+          }} // Callback chiamato quando si verifica un errore durante il caricamento
+        />
       </View>
-
-      {/* LISTA RICETTE */}
-      <FlatList
-        data={recipes}
-        renderItem={renderRecipe}
-        keyExtractor={(item) => item.id}
-        numColumns={2}
-        columnWrapperClassName="justify-between"
-        contentContainerClassName="px-5 pt-2 pb-5"
-        showsVerticalScrollIndicator={false}
-      />
-      
-    </ImageBackground>
+      <View className="basis-2/5">
+        <Text className="text-center text-2xl font-bold">{country}</Text>
+      </View>
+    </View>
   );
 }
