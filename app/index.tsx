@@ -1,7 +1,7 @@
-import { View, Text, Pressable, Button, FlatList } from 'react-native';
-import { useRouter, Link } from 'expo-router';
+import { View, Text, Pressable } from 'react-native';
+import { Link } from 'expo-router';
+
 export default function WelcomePage() {
-  const router = useRouter();
   return (
     <>
       <Link href={'/(tabs)'} asChild>
