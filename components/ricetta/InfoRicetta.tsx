@@ -1,6 +1,6 @@
 import { View, Image, Text } from 'react-native';
 import InfoCard from './interfaccia/InfoCard';
-import { useRecipe } from '../../app/ricetta/RecipeContex';
+import { useRecipe } from '../../contexts/RecipeContex';
 
 export default function InfoRicetta() {
   const { recipe } = useRecipe();

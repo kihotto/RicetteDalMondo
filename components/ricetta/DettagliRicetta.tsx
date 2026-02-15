@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native';
-import { useRecipe } from '../../app/ricetta/RecipeContex';
+import { useRecipe } from '../../contexts/RecipeContex';
 export default function DettagliRicetta() {
   const { recipe } = useRecipe();
   return (

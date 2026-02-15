@@ -4,7 +4,7 @@ import { View, Text, Image, StatusBar, ScrollView } from 'react-native';
 import InfoRicetta from '../../components/ricetta/InfoRicetta';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import DettagliRicetta from '../../components/ricetta/DettagliRicetta';
-import { RecipeProvider, useRecipe } from './RecipeContex';
+import { RecipeProvider, useRecipe } from '../../contexts/RecipeContex';
 import { MOCK_RICETTE } from '../../lib/constants';
 /// simulazione  se avessimo un db
 
@@ -25,23 +25,26 @@ export default function PaginaRicetta() {
 
   return (
     <RecipeProvider recipe={recipe}>
-      <View className=" flex-1 border-b bg-[#eceff1]" style={{ marginBottom: insets.bottom }}>
+      <View
+        className=" flex-1 border-b bg-[#eceff1]"
+        style={{ marginBottom: insets.bottom, paddingTop: insets.top }}>
         <StatusBar barStyle={'light-content'} />
         {/* stack necessario per navigazione e info base */}
-        <Stack.Screen
-          options={{
-            headerTitle: '',
-            headerShown: true,
-            headerTransparent: true,
-            headerShadowVisible: false,
-            headerStyle: { backgroundColor: 'transparent' },
-            headerTintColor: '#f2994a',
-          }}
-        />
+        {
+          <Stack.Screen
+            options={{
+              headerTitle: '',
+              headerShown: true,
+              headerTransparent: true,
+              headerShadowVisible: false,
+              headerStyle: { backgroundColor: 'transparent' },
+              headerTintColor: '#f2994a',
+              headerBackTitle: '',
+            }}
+          />
+        }
         {/* Immagine cover della ricetta */}
-        <View>
-          <Text>{recipe.title}</Text>
-        </View>
+
         <View className="h-80 w-full">
           <Image
             source={{
@@ -65,6 +68,9 @@ export default function PaginaRicetta() {
             className="flex-1 rounded-t-[45] border"
             bounces={false}
             showsVerticalScrollIndicator={false}>
+            <View className="my-2">
+              <Text>{recipe.title}</Text>
+            </View>
             <View className="my-2">
               <InfoRicetta />
             </View>
