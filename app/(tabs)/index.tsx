@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { View, Text } from 'react-native';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
+import ListaRicette from '../../components/ListaRicette';
 
 export default function WelcomePage() {
   const [country, setCountry] = useState(''); // Gestisce salvataggio nome paese selezionato
@@ -161,9 +162,12 @@ export default function WelcomePage() {
           }} // Callback chiamato quando si verifica un errore durante il caricamento
         />
       </View>
-      <View className="basis-2/5">
-        <Text className='text-center text-2xl font-bold'>{country}</Text>
-      </View>
+      {/* Se è stato selezionato un paese, mostra la lista delle ricette per quel paese. Flex-1 = 50% pagina */}
+      <View className="flex-1">
+            {country !== '' && (
+            <ListaRicette country={country} />
+        )}
+        </View>
     </View>
-  );
+    );
 }
