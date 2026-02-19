@@ -1,111 +1,114 @@
 import { View, Text, FlatList, TouchableOpacity, ImageBackground } from 'react-native';
-
+import { useRouter } from 'expo-router';
 // ------------------- INTERFACCIA PROPS -------------------
-interface ListaRicetteProps { // Definisce la prop(erty) che l'interfaccia riceve
+interface ListaRicetteProps {
+  // Definisce la prop(erty) che l'interfaccia riceve
   country: string; // Nome del paese selezionato dal globo
 }
 
 // ------------------- DATABASE FITTIZIO -------------------
 // Ricette organizzate per paese
 const RICETTE_PER_PAESE: { [key: string]: Array<{ id: string; name: string }> } = {
-  'Italy': [
+  Italy: [
     { id: '1', name: 'Carbonara' },
-    { id: '2', name: 'Pesto'},
-    { id: '3', name: 'Tiramisu'},
-    { id: '4', name: 'Pizza Margherita'},
-    { id: '5', name: 'Lasagne'},
-    { id: '6', name: 'Focaccia di Recco'},
-    { id: '7', name: 'Gnocchi al ragù'},
-    { id: '8', name: 'Risotto alla milanese'},
+    { id: '2', name: 'Pesto' },
+    { id: '3', name: 'Tiramisu' },
+    { id: '4', name: 'Pizza Margherita' },
+    { id: '5', name: 'Lasagne' },
+    { id: '6', name: 'Focaccia di Recco' },
+    { id: '7', name: 'Gnocchi al ragù' },
+    { id: '8', name: 'Risotto alla milanese' },
   ],
-  'France': [
+  France: [
     { id: '1', name: 'Croissant' },
-    { id: '2', name: 'Ratatouille'},
-    { id: '3', name: 'Coq au Vin'},
-    { id: '4', name: 'Crème Brûlée'},
-    { id: '5', name: 'Quiche Lorraine'},
-    { id: '6', name: 'Bouillabaisse'},
+    { id: '2', name: 'Ratatouille' },
+    { id: '3', name: 'Coq au Vin' },
+    { id: '4', name: 'Crème Brûlée' },
+    { id: '5', name: 'Quiche Lorraine' },
+    { id: '6', name: 'Bouillabaisse' },
   ],
-  'Spain': [
+  Spain: [
     { id: '1', name: 'Paella' },
-    { id: '2', name: 'Gazpacho'},
-    { id: '3', name: 'Tortilla Española'},
-    { id: '4', name: 'Jamón Ibérico'},
-    { id: '5', name: 'Churros'},
+    { id: '2', name: 'Gazpacho' },
+    { id: '3', name: 'Tortilla Española' },
+    { id: '4', name: 'Jamón Ibérico' },
+    { id: '5', name: 'Churros' },
   ],
-  'Japan': [
+  Japan: [
     { id: '1', name: 'Sushi' },
-    { id: '2', name: 'Ramen'},
-    { id: '3', name: 'Tempura'},
-    { id: '4', name: 'Tonkatsu'},
-    { id: '5', name: 'Okonomiyaki'},
+    { id: '2', name: 'Ramen' },
+    { id: '3', name: 'Tempura' },
+    { id: '4', name: 'Tonkatsu' },
+    { id: '5', name: 'Okonomiyaki' },
   ],
-  'Mexico': [
+  Mexico: [
     { id: '1', name: 'Tacos' },
-    { id: '2', name: 'Guacamole'},
-    { id: '3', name: 'Enchiladas'},
-    { id: '4', name: 'Quesadilla'},
-    { id: '5', name: 'Chiles en Nogada'},
+    { id: '2', name: 'Guacamole' },
+    { id: '3', name: 'Enchiladas' },
+    { id: '4', name: 'Quesadilla' },
+    { id: '5', name: 'Chiles en Nogada' },
   ],
-  'India': [
+  India: [
     { id: '1', name: 'Butter Chicken' },
-    { id: '2', name: 'Biryani'},
-    { id: '3', name: 'Samosa'},
-    { id: '4', name: 'Tikka Masala'},
-    { id: '5', name: 'Naan'},
+    { id: '2', name: 'Biryani' },
+    { id: '3', name: 'Samosa' },
+    { id: '4', name: 'Tikka Masala' },
+    { id: '5', name: 'Naan' },
   ],
   'United States of America': [
     { id: '1', name: 'Burger' },
-    { id: '2', name: 'BBQ Ribs'},
-    { id: '3', name: 'Mac and Cheese'},
-    { id: '4', name: 'Apple Pie'},
-    { id: '5', name: 'Hot Dog'},
+    { id: '2', name: 'BBQ Ribs' },
+    { id: '3', name: 'Mac and Cheese' },
+    { id: '4', name: 'Apple Pie' },
+    { id: '5', name: 'Hot Dog' },
   ],
-  'China': [
+  China: [
     { id: '1', name: 'Peking Duck' },
-    { id: '2', name: 'Dim Sum'},
-    { id: '3', name: 'Kung Pao Chicken'},
-    { id: '4', name: 'Sweet and Sour Pork'},
-    { id: '5', name: 'Spring Rolls'},
+    { id: '2', name: 'Dim Sum' },
+    { id: '3', name: 'Kung Pao Chicken' },
+    { id: '4', name: 'Sweet and Sour Pork' },
+    { id: '5', name: 'Spring Rolls' },
   ],
   // Default per paesi senza ricette
-  'default': [
-    { id: '1', name: 'No recipes available' },
-  ],
+  default: [{ id: '1', name: 'No recipes available' }],
 };
 
 // ------------------- LE SEGUENTI EMOJI SONO RIMPIAZZO PER LE IMMAGINI  -------------------
 const EMOJI_PAESE: { [key: string]: string } = {
-  'Italy': '🍝',
-  'France': '🥐',
-  'Spain': '🥘',
-  'Japan': '🍱',
-  'Mexico': '🌮',
-  'India': '🍛',
+  Italy: '🍝',
+  France: '🥐',
+  Spain: '🥘',
+  Japan: '🍱',
+  Mexico: '🌮',
+  India: '🍛',
   'United States of America': '🍔',
-  'China': '🥢',
-  'default': '🍽️',
+  China: '🥢',
+  default: '🍽️',
 };
 
 export default function ListaRicette({ country }: ListaRicetteProps) {
+  const router = useRouter(); //serve per il routing
+
   // ------------------- LOGICA RICETTE -------------------
   // Prende le ricette del paese selezionato, o quelle di default se il paese non esiste (possibili preferiti?)
   const recipes = RICETTE_PER_PAESE[country] || RICETTE_PER_PAESE['default'];
-  
+
   // Emoji per il paese (temporary)
   const emoji = EMOJI_PAESE[country] || EMOJI_PAESE['default'];
 
   // ------------------- HANDLER -------------------
   const handleRecipePress = (recipe: any) => {
     console.log(`Ricetta selezionata da ${country}:`, recipe.name);
+
+    router.push(`/ricetta/${recipe.id}`);
     // Questo è per la navigazione alla pagina di dettaglio
     // navigation.navigate('RecipeDetail', { recipeId: recipe.id, country });
   };
 
   // ------------------- STILE SINGOLE CARTE RICETTA -------------------
   const renderRecipe = ({ item }: { item: any }) => (
-    <TouchableOpacity 
-      className="w-[48%] h-[70px] flex-row items-center px-2.5 py-2.5 rounded-2xl border border-white/30 mb-3"
+    <TouchableOpacity
+      className="mb-3 h-[70px] w-[48%] flex-row items-center rounded-2xl border border-white/30 px-2.5 py-2.5"
       style={{
         backgroundColor: 'rgba(255, 255, 255, 0.08)',
       }}
@@ -113,26 +116,24 @@ export default function ListaRicette({ country }: ListaRicetteProps) {
       activeOpacity={0.8} // Leggero feedback al tocco
     >
       {/* IMMAGINE - Cerchio con emoji del paese */}
-      <View 
-        className="w-[50px] h-[50px] rounded-full justify-center items-center mr-2.5 border border-white/40"
+      <View
+        className="mr-2.5 h-[50px] w-[50px] items-center justify-center rounded-full border border-white/40"
         style={{
           backgroundColor: 'rgba(255, 255, 255, 0.10)',
-        }}
-      >
-        <Text 
+        }}>
+        <Text
           className="text-2xl"
           style={{
             textShadowColor: 'rgba(0, 0, 0, 0.8)',
             textShadowOffset: { width: 0, height: 1 },
             textShadowRadius: 3,
-          }}
-        >
+          }}>
           {emoji}
         </Text>
       </View>
 
       {/* NOME RICETTA */}
-      <Text 
+      <Text
         className="flex-1 text-[15px] font-semibold text-white"
         numberOfLines={2} // Limita a 2 righe per evitare overflow
         style={{
@@ -140,50 +141,44 @@ export default function ListaRicette({ country }: ListaRicetteProps) {
           textShadowColor: 'rgba(0, 0, 0, 0.8)',
           textShadowOffset: { width: 0, height: 1 },
           textShadowRadius: 4,
-        }}
-      >
+        }}>
         {item.name}
       </Text>
     </TouchableOpacity>
   );
 
   return (
-    <ImageBackground 
+    <ImageBackground
       source={require('../assets/scales.png')}
-      className="flex-1 w-full h-full" // 100% larghezza e altezza del container
-      resizeMode="cover"
-    >
-      
+      className="h-full w-full flex-1" // 100% larghezza e altezza del container
+      resizeMode="cover">
       {/* HEADER - Nome del paese */}
-      <View className="px-5 pt-5 pb-4">
-        <View 
-          className="py-3.5 px-4 rounded-2xl border border-white/30"
+      <View className="px-5 pb-4 pt-5">
+        <View
+          className="rounded-2xl border border-white/30 px-4 py-3.5"
           style={{
             backgroundColor: 'rgba(255, 255, 255, 0.1)',
-          }}
-        >
+          }}>
           {/* Nome paese selezionato */}
-          <Text 
-            className="text-[27px] text-white font-bold"
+          <Text
+            className="text-[27px] font-bold text-white"
             style={{
               letterSpacing: 0.3,
               textShadowColor: 'rgba(0, 0, 0, 0.8)',
               textShadowOffset: { width: 0, height: 1 },
               textShadowRadius: 4,
-            }}
-          >
+            }}>
             {country}
           </Text>
-          
+
           {/* Numero ricette */}
-          <Text 
-            className="text-[13px] text-white/80 font-medium mt-1"
+          <Text
+            className="mt-1 text-[13px] font-medium text-white/80"
             style={{
               textShadowColor: 'rgba(0, 0, 0, 0.6)',
               textShadowOffset: { width: 0, height: 1 },
               textShadowRadius: 3,
-            }}
-          >
+            }}>
             {recipes.length} {recipes.length === 1 ? 'ricetta' : 'ricette'}
           </Text>
         </View>
@@ -199,7 +194,6 @@ export default function ListaRicette({ country }: ListaRicetteProps) {
         contentContainerClassName="px-5 pt-2 pb-5"
         showsVerticalScrollIndicator={false}
       />
-      
     </ImageBackground>
   );
 }
