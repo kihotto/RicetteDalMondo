@@ -48,9 +48,7 @@ export default function PaginaRicetta() {
         <View className="h-80 w-full">
           <Image
             source={{
-              uri:
-                recipe.imageUrl ||
-                'https://blog.giallozafferano.it/allacciateilgrembiule/wp-content/uploads/2021/01/patatine-fritte-fatte-in-casa.jpg',
+              uri: 'https://blog.giallozafferano.it/allacciateilgrembiule/wp-content/uploads/2021/01/patatine-fritte-fatte-in-casa.jpg',
             }}
             className="h-full w-full"
             resizeMode="cover"
@@ -68,9 +66,9 @@ export default function PaginaRicetta() {
             className="flex-1 rounded-t-[45] border"
             bounces={false}
             showsVerticalScrollIndicator={false}>
-            <View className="my-2">
+            {/*  <View className="my-2">
               <Text>{recipe.title}</Text>
-            </View>
+            </View> */}
             <View className="my-2">
               <InfoRicetta />
             </View>
