@@ -2,15 +2,18 @@ import { useState } from 'react';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 
 interface MappaProps {
-    countryColor?: string;
-    countryColorActive?: string;
-    borderColor?: string;
-    borderColorActive?: string;
-    sideColorActive?: string
-};
+  countryColor?: string;
+  countryColorActive?: string;
+  borderColor?: string;
+  borderColorActive?: string;
+  sideColorActive?: string;
+  setCountryID: (text: string) => void;
+}
 
 // Incorporare un file direttamente come stringa invece di caricarlo da un percorso
-const svgDataUrl = "data:image/svg+xml," + encodeURIComponent(`
+const svgDataUrl =
+  'data:image/svg+xml,' +
+  encodeURIComponent(`
 <svg xmlns="http://www.w3.org/2000/svg" width="400" height="200" viewBox="0 0 300 150">
   <path
       transform="matrix(0.75, 0, 0, 0.75, 41.601914, 3.863941)"
@@ -23,22 +26,24 @@ const svgDataUrl = "data:image/svg+xml," + encodeURIComponent(`
 </svg>
 `);
 
-export default function Mappamondo ({
-    countryColor='#DDB892', 
-    countryColorActive='#c0dfa1', 
-    borderColor = "#000000", 
-    borderColorActive='#89023e', 
-    sideColorActive='#602387'}: MappaProps
-) {
-    const [country, setCountry] = useState<string>(''); // Gestisce salvataggio nome paese selezionato
+export default function Mappamondo({
+  countryColor = '#DDB892',
+  countryColorActive = '#c0dfa1',
+  borderColor = '#000000',
+  borderColorActive = '#89023e',
+  sideColorActive = '#602387',
+  setCountryID,
+}: MappaProps) {
+  /* const [country, setCountry] = useState<string>(''); */ // Gestisce salvataggio nome paese selezionato
 
-    // Tramite WebViewMessageEvent salva nome paese selezionato
-    const handleMessage = (event: WebViewMessageEvent) => {
-        const countryName = event.nativeEvent.data;
-        setCountry(countryName);
-    };
+  // Tramite WebViewMessageEvent salva nome paese selezionato
+  const handleMessage = (event: WebViewMessageEvent) => {
+    const countryName = event.nativeEvent.data;
+    setCountryID(countryName);
+    /*  setCountry(countryName); */
+  };
 
-    const htmlContent = `
+  const htmlContent = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -296,20 +301,20 @@ export default function Mappamondo ({
 
   return (
     <WebView
-        className="flex-1 bg-transparent"
-        originWhitelist={['*']} // Specifica quali origini (domini) possono essere caricate nella WebView, in questo caso accetta qualsiasi origine
-        source={{ html: htmlContent }}
-        javaScriptEnabled={true} // Abilita l'esecuzione di JS dentro la WebView, default: true su iOS, false su Android
-        domStorageEnabled={true} // Abilita il DOM Storage (localStorage e sessionStorage), permette al JS nella WebView di salvare dati localmente
-        allowUniversalAccessFromFileURLs={true} // Evita il problema del CORS
-        mixedContentMode="always" // Il "mixed content" si verifica quando una pagina HTTPS carica risorse HTTP (o viceversa)
-        onMessage={handleMessage} // Ponte di comunicazione WebView -> React Native
-        startInLoadingState={true} // Mostra automaticamente un indicatore di caricamento mentre la WebView si carica
-        scalesPageToFit={true} // su alcuni device potrebbero esserci problemi di scala quindi scalePageToFit={true} aiuta per responsive
-        onError={(syntheticEvent) => {
+      className="flex-1 bg-transparent"
+      originWhitelist={['*']} // Specifica quali origini (domini) possono essere caricate nella WebView, in questo caso accetta qualsiasi origine
+      source={{ html: htmlContent }}
+      javaScriptEnabled={true} // Abilita l'esecuzione di JS dentro la WebView, default: true su iOS, false su Android
+      domStorageEnabled={true} // Abilita il DOM Storage (localStorage e sessionStorage), permette al JS nella WebView di salvare dati localmente
+      allowUniversalAccessFromFileURLs={true} // Evita il problema del CORS
+      mixedContentMode="always" // Il "mixed content" si verifica quando una pagina HTTPS carica risorse HTTP (o viceversa)
+      onMessage={handleMessage} // Ponte di comunicazione WebView -> React Native
+      startInLoadingState={true} // Mostra automaticamente un indicatore di caricamento mentre la WebView si carica
+      scalesPageToFit={true} // su alcuni device potrebbero esserci problemi di scala quindi scalePageToFit={true} aiuta per responsive
+      onError={(syntheticEvent) => {
         const { nativeEvent } = syntheticEvent;
         console.warn('WebView error: ', nativeEvent);
-        }} // Callback chiamato quando si verifica un errore durante il caricamento
+      }} // Callback chiamato quando si verifica un errore durante il caricamento
     />
-  )
+  );
 }
