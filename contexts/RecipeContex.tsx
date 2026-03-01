@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from 'react';
-interface Recipe {
-  id: number;
+export interface Recipe {
+  id: string;
   title: string;
   ingredienti?: string;
   tempoPreparazione?: number;

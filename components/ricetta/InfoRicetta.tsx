@@ -34,6 +34,7 @@ export default function InfoRicetta() {
         break;
     }
   };
+  console.log('RECIPE INFO', recipe?.costoPerPersona);
   return (
     <View className="flex-1 flex-row justify-evenly px-2 ">
       {/* TODO creare componente del visualizzatore  */}

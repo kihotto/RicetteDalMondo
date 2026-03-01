@@ -1,22 +1,43 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
-import { View, Text, Image, StatusBar, ScrollView } from 'react-native';
+import { View, Text, Image, StatusBar, ScrollView, ActivityIndicator } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useEffect, useState } from 'react';
 
 import InfoRicetta from '../../components/ricetta/InfoRicetta';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import DettagliRicetta from '../../components/ricetta/DettagliRicetta';
-import { RecipeProvider, useRecipe } from '../../contexts/RecipeContex';
-import { MOCK_RICETTE } from '../../lib/constants';
-/// simulazione  se avessimo un db
+import { RecipeProvider } from '../../contexts/RecipeContex';
+import { fetchRecipeById } from '../../lib/api';
 
 export default function PaginaRicetta() {
-  const { id } = useLocalSearchParams(); /// con un db dovremmo usare questo id per filtrare  la ricetta
+  const { id } = useLocalSearchParams();
   const insets = useSafeAreaInsets();
 
-  /*  TODO Serve hook per la ricerca da aggiungere appena abbiamo il db */
-  let recipe: any = null;
-  for (const country of MOCK_RICETTE) {
-    recipe = country.recipes.find((r) => r.id === Number(id));
-    if (recipe) break;
+  const [recipe, setRecipe] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!id) return;
+
+    const loadRecipe = async () => {
+      try {
+        const data = await fetchRecipeById(id as string);
+        setRecipe(data);
+      } catch (error) {
+        console.error('Errore caricamento ricetta', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadRecipe();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <ActivityIndicator size="large" />
+      </View>
+    );
   }
 
   if (!recipe) {
@@ -26,25 +47,23 @@ export default function PaginaRicetta() {
   return (
     <RecipeProvider recipe={recipe}>
       <View
-        className=" flex-1 border-b bg-[#eceff1]"
+        className="flex-1 border-b bg-[#eceff1]"
         style={{ marginBottom: insets.bottom, paddingTop: insets.top }}>
         <StatusBar barStyle={'light-content'} />
-        {/* stack necessario per navigazione e info base */}
-        {
-          <Stack.Screen
-            options={{
-              headerTitle: '',
-              headerShown: true,
-              headerTransparent: true,
-              headerShadowVisible: false,
-              headerStyle: { backgroundColor: 'transparent' },
-              headerTintColor: '#f2994a',
-              headerBackTitle: '',
-            }}
-          />
-        }
-        {/* Immagine cover della ricetta */}
 
+        <Stack.Screen
+          options={{
+            headerTitle: '',
+            headerShown: true,
+            headerTransparent: true,
+            headerShadowVisible: false,
+            headerStyle: { backgroundColor: 'transparent' },
+            headerTintColor: '#f2994a',
+            headerBackTitle: '',
+          }}
+        />
+
+        {/* COVER */}
         <View className="h-80 w-full">
           <Image
             source={{
@@ -54,15 +73,10 @@ export default function PaginaRicetta() {
             resizeMode="cover"
           />
         </View>
+
+        {/* BODY */}
         <View className="-mt-12 flex-1 rounded-t-[45] border-t bg-[#eceff1] px-2 pt-2">
           <ScrollView
-            style={{
-              shadowColor: '#000000',
-              shadowOffset: { width: 0, height: 0 },
-              shadowOpacity: 0.1,
-              shadowRadius: 10,
-              elevation: 3,
-            }}
             className="flex-1 rounded-t-[45] border"
             bounces={false}
             showsVerticalScrollIndicator={false}>
@@ -72,6 +86,7 @@ export default function PaginaRicetta() {
             <View className="my-2">
               <InfoRicetta />
             </View>
+
             <View className="my-2 px-4">
               <DettagliRicetta />
             </View>
