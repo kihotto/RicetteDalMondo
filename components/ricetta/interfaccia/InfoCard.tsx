@@ -30,11 +30,11 @@ interface Props {
    * />
    */
   icon: React.ReactNode | ImageSourcePropType | string;
-  value: number | string | undefined;
+  value?: number | string | undefined;
   identifier?: string;
 }
 
-export default function ({ icon, value = 0, identifier = '' }: Props) {
+export default function ({ icon, value, identifier = '' }: Props) {
   const Sizes = {
     icon: 30,
     containerH: 120,
