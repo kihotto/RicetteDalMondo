@@ -6,8 +6,8 @@ interface Recipe {
   tempoPreparazione?: number;
   tempoCottura?: number;
   porzioni?: number;
-  costoPerPersona?: string;
-  difficolta?: string;
+  costoPerPersona: 'Basso' | 'Medio' | 'Alto';
+  difficolta: 'Facile' | 'Media' | 'Difficile';
   preparazione?: string;
   categoria?: string;
   imageUrl?: string;
