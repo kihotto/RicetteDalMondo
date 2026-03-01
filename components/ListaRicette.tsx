@@ -6,6 +6,12 @@ interface ListaRicetteProps {
   country: string; // Nome del paese selezionato dal globo
 }
 
+// Interfaccia per una singola ricetta
+interface Recipe {
+  id: string;
+  name: string;
+}
+
 // ------------------- DATABASE FITTIZIO -------------------
 // Ricette organizzate per paese
 const RICETTE_PER_PAESE: { [key: string]: Array<{ id: string; name: string }> } = {
@@ -97,7 +103,7 @@ export default function ListaRicette({ country }: ListaRicetteProps) {
   const emoji = EMOJI_PAESE[country] || EMOJI_PAESE['default'];
 
   // ------------------- HANDLER -------------------
-  const handleRecipePress = (recipe: any) => {
+  const handleRecipePress = (recipe: Recipe) => {
     console.log(`Ricetta selezionata da ${country}:`, recipe.name);
 
     router.push(`/ricetta/${recipe.id}`);
@@ -106,7 +112,7 @@ export default function ListaRicette({ country }: ListaRicetteProps) {
   };
 
   // ------------------- STILE SINGOLE CARTE RICETTA -------------------
-  const renderRecipe = ({ item }: { item: any }) => (
+  const renderRecipe = ({ item }: { item: Recipe }) => (
     <TouchableOpacity
       className="mb-3 h-[70px] w-[48%] flex-row items-center rounded-2xl border border-white/30 px-2.5 py-2.5"
       style={{
@@ -148,10 +154,7 @@ export default function ListaRicette({ country }: ListaRicetteProps) {
   );
 
   return (
-    <ImageBackground
-      source={require('../assets/scales.png')}
-      className="h-full w-full flex-1" // 100% larghezza e altezza del container
-      resizeMode="cover">
+      <View className="flex-1">
       {/* HEADER - Nome del paese */}
       <View className="px-5 pb-4 pt-5">
         <View
@@ -194,7 +197,7 @@ export default function ListaRicette({ country }: ListaRicetteProps) {
         contentContainerClassName="px-5 pt-2 pb-5"
         showsVerticalScrollIndicator={false}
       />
-    </ImageBackground>
+    </View>
   );
 }
 
