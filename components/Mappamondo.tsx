@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
+import countriesData from 'assets/data/countries.json';
 
 interface MappaProps {
   countryColor?: string;
@@ -34,16 +35,17 @@ export default function Mappamondo({
   sideColorActive = '#602387',
   setCountryID,
 }: MappaProps) {
-  /* const [country, setCountry] = useState<string>(''); */ // Gestisce salvataggio nome paese selezionato
-
   // Tramite WebViewMessageEvent salva nome paese selezionato
   const handleMessage = (event: WebViewMessageEvent) => {
     const countryName = event.nativeEvent.data;
     setCountryID(countryName);
-    /*  setCountry(countryName); */
   };
 
-  const htmlContent = `
+  const htmlContent = useMemo(() => {
+    // Trasformiamo il JSON in una stringa
+    const geoJsonString = JSON.stringify(countriesData);
+
+    return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -137,24 +139,36 @@ export default function Mappamondo({
         const speechBubbleParagraph = document.getElementById("myParagraph");
         const controlsBtn = document.getElementById("controlsBtn");
 
+        // Caricamento dati variabile geoJsonString
+        const countries = ${geoJsonString};
+
         let selectedCountry = null; // Variabile per nome paese
 
         // Funzione gestisce il click su un paese
         const handlePolygonClick = (polygon) => {
+            // Salva il nome del paese cliccato
+            const countryName = polygon.properties.ADMIN;
+
+            // Evita di rieseguire la logica se clicchi lo stesso paese già selezionato
+            if (selectedCountry === countryName) return;
+
+            selectedCountry = countryName;
+
             // Disattiva i controlli (zoom e movimento)
-            const controls = world.controls();
-            controls.enabled = false;
+            world.controls().enabled = false;
 
             // Disattiva la possibilità di cliccare su un altro paese
             world.onPolygonClick(null);
 
-            // Salva il nome del paese cliccato
-            const countryName = polygon.properties.ADMIN;
-            selectedCountry = countryName;
+            // Aggiorna gli stili del paese selezionato
+            world.polygonCapColor(world.polygonCapColor());
+            world.polygonAltitude(world.polygonAltitude());
+            world.polygonStrokeColor(world.polygonStrokeColor());
+            world.polygonSideColor(world.polygonSideColor());
 
-            // Usa poligon.bbox per centrare e gestire zoom 
+            // Usa polygon.bbox per centrare e gestire zoom 
             const lat = (polygon.bbox[1] + polygon.bbox[3]) / 2;
-            const lng = (polygon.bbox[0] + polygon.bbox[2]) / 2 + 10; // Aggiungo 10 per fare in modo che si veda meglio il sollevamento (altitude)
+            const lng = (polygon.bbox[0] + polygon.bbox[2]) / 2 + 10; // Aggiungo 10 in modo che si veda meglio il sollevamento (altitude)
 
             // Calcola l'estensione del paese tramite bbox
             const lngSpan = polygon.bbox[2] - polygon.bbox[0];
@@ -162,20 +176,10 @@ export default function Mappamondo({
             const maxSpan = Math.max(lngSpan, latSpan);
 
             // Determina l'altitude in base alla dimensione del paese
-            let altitude;
-            if (maxSpan > 80) {
-                altitude = 1.4; // paese grande
-            } else if (maxSpan > 20) {
-                altitude = 1; // paese medio
-            } else {
-                altitude = 0.8; // paese piccolo
-            }
+            let altitude = maxSpan > 80 ? 1.4 : (maxSpan > 20 ? 1 : 0.8);
 
             // Fa partire zoom e spostamento in 1200ms
             world.pointOfView({ lat, lng, altitude }, 1200);
-
-            // Trucco per forzare il re-rendering del globo e visualizzare i cambiamenti al click
-            world.polygonsData(world.polygonsData());
 
             // Aggiungo il nome paese al <p> e assegno display: "flex" al div padre
             speechBubbleParagraph.textContent = selectedCountry; 
@@ -191,6 +195,9 @@ export default function Mappamondo({
                 controlsBtn.style.opacity = "1";
             }, 1200); // stesso tempo della transizione zoom
 
+            // Rendering
+            render();
+
             // Passa il nome paese a ReactNative o stampa in console
             if (window.ReactNativeWebView) {
                 window.ReactNativeWebView.postMessage(countryName);
@@ -199,19 +206,30 @@ export default function Mappamondo({
             }
         };
 
-        // Funzione per riabilitare il click su un paese e i controlli (zoom e spostamento)
+        // Funzione riabilita il click su un paese e i controlli (zoom e spostamento)
         const enablePolygonClick = () => {
             speechBubbleDiv.style.display = "none";
             selectedCountry = null;
 
-            const controls = world.controls();
-            controls.enabled = true;
+            world.controls().enabled = true;
 
             controlsBtn.disabled = true;
             controlsBtn.style.opacity = "0.5";
 
             world.onPolygonClick(handlePolygonClick);
-            world.polygonsData(world.polygonsData()); // forza re-render per togliere il colore selezionato
+
+            //Infine forza il refresh dello stile
+            world.polygonCapColor(world.polygonCapColor());
+            world.polygonAltitude(world.polygonAltitude());
+            world.polygonStrokeColor(world.polygonStrokeColor());
+            world.polygonSideColor(world.polygonSideColor());
+
+            // Rendering
+            render();
+
+            if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage('');
+            }
         };
 
         const world = Globe()
@@ -261,9 +279,9 @@ export default function Mappamondo({
             // Il paese selezionato si solleva dalla superficie
             .polygonAltitude((polygon) => {
                 if (selectedCountry && polygon.properties.ADMIN === selectedCountry) {
-                    return 0.022;
+                    return 0.04;
                 }
-                return 0.01;
+                return 0.015;
             })
 
             // Imposta lo zoom iniziale, viene impostata anche la durata della transizione 0 = istantaneo
@@ -271,33 +289,57 @@ export default function Mappamondo({
 
             .onPolygonClick(handlePolygonClick);
 
-        // Dati coordinate geografiche dei confini (contiene nome del paese ADMIN, codice ISO, ecc)
-        fetch('https://raw.githubusercontent.com/vasturiano/react-globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson')
-            .then(res => res.json())
-            .then(countries => {
-                // Passando i dati a .polygonsData() il globo sa quali poligoni disegnare sulla sfera
-                world.polygonsData(countries.features);
+        // CONFIGURAZIONE CAMERA E "RENDER ON DEMAND"
+        const camera = world.camera();
+        const renderer = world.renderer();
+        const controls = world.controls();
+        
+        camera.near = 10;
+        camera.far = 1000;
+        camera.updateProjectionMatrix();
 
-                /* I controlli Three.js vengono inizializzati in modo asincrono, 
-                delay di 100ms garantisce che il globo sia completamente inizializzato prima di modificare i limiti di zoom
-                */
-                setTimeout(() => {
-                    const controls = world.controls();
-                    controls.minDistance = 150;
-                    controls.maxDistance = 350;
-                }, 100);
-            })
-            .catch(err => console.error("Errore caricamento GeoJSON:", err));
+        // Riduzione della risoluzione (non è necessario che Pixel ratio sia superiore a 1, questo consente guadagno di fluidità)
+        renderer.setPixelRatio(1);
+
+        let renderRequested = false; // Flag per la funzione
+        
+        // Funzione di rendering manuale (evita il loop continuo di rendering quando con ci sono cambiamenti)
+        function render() {
+            if (!renderRequested) {
+                renderRequested = true;
+                requestAnimationFrame(() => {
+                    renderRequested = false;
+                    renderer.render(world.scene(), world.camera());
+                });
+            }
+        }
+
+        // Renderizza solo quando l'utente muove la camera
+        controls.addEventListener('change', render);
+
+        /* I controlli Three.js vengono inizializzati in modo asincrono, 
+        delay di 100ms garantisce che il globo sia completamente inizializzato prima di modificare i limiti di zoom
+        */
+        setTimeout(() => {
+            controls.minDistance = 150;
+            controls.maxDistance = 350;
+        }, 100);
+
+        // Inizializzazione poligoni
+        world.polygonsData(countries.features);
+        render();
 
         window.addEventListener('resize', () => {
             world.width(window.innerWidth);
             world.height(window.innerHeight);
+            render();
         });
     </script>
 </body>
 
 </html>
   `;
+}, [countryColor, countryColorActive, borderColor, borderColorActive, sideColorActive]);
 
   return (
     <WebView
