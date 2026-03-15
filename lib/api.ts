@@ -1,6 +1,7 @@
-const BASE_URL = '';
+const BASE_URL = 'https://recipe-ardl.onrender.com/api';
 //http://192.168.1.35:8082/api  base url da copiare
 //controllare ip!! cambia spesso
+//link render https://recipe-ardl.onrender.com/api
 export async function fetchRecipesByCountry(country: string) {
   const response = await fetch(`${BASE_URL}/recipes/country/${country}`);
 
