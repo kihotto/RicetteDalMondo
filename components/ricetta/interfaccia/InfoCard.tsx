@@ -30,16 +30,18 @@ interface Props {
    * />
    */
   icon: React.ReactNode | ImageSourcePropType | string;
+  preText?: string;
   value?: number | string | undefined;
   identifier?: string;
+  overrideW?: string;
 }
 
-export default function ({ icon, value, identifier = '' }: Props) {
+export default function ({ icon, value, identifier = '', preText, overrideW }: Props) {
   const Sizes = {
     icon: 30,
-    containerH: 120,
-    containerW: 60,
-    text: 13,
+    containerH: 30,
+    containerW: 100,
+    text: 12,
   };
   const renderIcon = () => {
     switch (true) {
@@ -67,7 +69,7 @@ export default function ({ icon, value, identifier = '' }: Props) {
   };
   return (
     <View
-      className=" flex-col items-center gap-3  rounded-full border-2 bg-[#f2994a]/85 px-2  pb-6 pt-2"
+      className={`flex-row items-center rounded-full border-2 bg-[#f4f4f4]/75 px-0 ${overrideW} overflow-hidden`}
       style={{
         height: Sizes.containerH,
         width: Sizes.containerW,
@@ -77,17 +79,28 @@ export default function ({ icon, value, identifier = '' }: Props) {
         shadowRadius: 10,
         elevation: 10,
       }}>
-      <View className="h-12 w-12 items-center justify-center rounded-full border border-black bg-[#eceff1]/40 ">
+      {/* icona */}
+      <View
+        style={{ height: Sizes.icon, width: Sizes.icon }}
+        className=" mr-1 items-center justify-center rounded-full bg-[rgba(0,0,0,0.4)]">
         {renderIcon()}
       </View>
 
-      <View className="w-full flex-1 flex-col items-center justify-center ">
-        <Text className=" font-bold capitalize" style={{ fontSize: Sizes.text }}>
-          {value}
-        </Text>
-        {/* NUMBER  */}
-        {identifier !== '' && <Text className="text-sm uppercase">{identifier}</Text>}
-        {/* "min"|"ore"  */}
+      <View className="w-full flex-1 flex-col">
+        <View className="flex-row items-center gap-1" style={{ flexWrap: 'wrap' }}>
+          <Text style={{ fontSize: Sizes.text, fontWeight: '700', color: 'black' }}>{preText}</Text>
+          <Text style={{ fontSize: Sizes.text, fontWeight: '700', color: 'black' }}>{value}</Text>
+          {identifier !== '' && (
+            <Text
+              style={{ fontSize: Sizes.text, fontWeight: '700', color: 'black' }}
+              className="text-sm uppercase">
+              {identifier}
+            </Text>
+          )}
+
+          {/* NUMBER  */}
+          {/* "min"|"ore"  */}
+        </View>
       </View>
     </View>
   );
