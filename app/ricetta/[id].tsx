@@ -74,6 +74,9 @@ export default function PaginaRicetta() {
             className="h-full w-full"
             resizeMode="cover"
           />
+          <View className="absolute  bottom-20 left-0 right-0">
+            <InfoRicetta sizeIcons={15} />
+          </View>
         </View>
 
         {/* BODY */}
@@ -82,13 +85,6 @@ export default function PaginaRicetta() {
             className="flex-1 rounded-t-[45] border"
             bounces={false}
             showsVerticalScrollIndicator={false}>
-            {/*  <View className="my-2">
-              <Text>{recipe.title}</Text>
-            </View> */}
-            <View className="my-2">
-              <InfoRicetta />
-            </View>
-
             <View className="my-2 px-4">
               <DettagliRicetta />
             </View>
