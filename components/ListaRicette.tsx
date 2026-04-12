@@ -17,7 +17,7 @@ interface ListaRicetteProps {
 export default function ListaRicette({ country }: ListaRicetteProps) {
   const router = useRouter();
 
-  const { recipes, loading, error } = useRecipes(country);
+  const { recipes, loading, error, hasNoRecipe } = useRecipes(country);
 
   const handleRecipePress = (recipe: Recipe) => {
     router.push(`/ricetta/${recipe.id}`);
@@ -46,19 +46,28 @@ export default function ListaRicette({ country }: ListaRicetteProps) {
       </Text>
     </TouchableOpacity>
   );
-
-  if (loading) {
-    return (
-      <View className="flex-1 items-center justify-center">
-        <ActivityIndicator size="large" />
-      </View>
-    );
-  }
-
   if (error) {
     return (
       <View className="flex-1 items-center justify-center">
         <Text>Errore caricamento ricette</Text>
+      </View>
+    );
+  }
+
+  if (loading || !hasNoRecipe) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <Text className="text-xl font-bold text-red-600">Lo chef sta cercando il ricettario..</Text>
+        <ActivityIndicator size="large" color={'#ff0000'} />
+      </View>
+    );
+  }
+  if (recipes.length === 0) {
+    return (
+      <View className="flex-1 items-center justify-center">
+        <Text className="text-xl font-bold text-red-600">
+          Lo chef non ha trovato il ricettario..
+        </Text>
       </View>
     );
   }
