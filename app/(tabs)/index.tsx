@@ -6,7 +6,6 @@ import Mappamondo from '../../components/Mappamondo';
 
 export default function WelcomePage() {
   const [country, setCountry] = useState<string>('');
-  console.log(country);
 
   return (
     <View className="flex-1">
