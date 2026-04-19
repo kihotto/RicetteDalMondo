@@ -52,7 +52,7 @@ export default function Mappamondo({
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width,user-scalable=no, initial-scale=1.0">
     <style>${globeStyles}</style>
     <style>
         #speechBubble {
@@ -91,12 +91,12 @@ export default function Mappamondo({
 
     <script>
         const CONFIG = ${JSON.stringify({
-            countryColor,
-            countryColorActive,
-            borderColor,
-            borderColorActive,
-            sideColorActive,
-            geoData: countriesData,
+          countryColor,
+          countryColorActive,
+          borderColor,
+          borderColorActive,
+          sideColorActive,
+          geoData: countriesData,
         })};
     </script>
     <script>${globeScript}</script>
@@ -104,7 +104,7 @@ export default function Mappamondo({
 
 </html>
   `;
-}, [countryColor, countryColorActive, borderColor, borderColorActive, sideColorActive]);
+  }, [countryColor, countryColorActive, borderColor, borderColorActive, sideColorActive]);
 
   return (
     <WebView

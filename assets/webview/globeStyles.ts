@@ -1,5 +1,6 @@
 export const globeStyles = `
 body {
+ touch-action: none;
     margin: 0;
     background-color: rgb(30, 30, 30);
     overflow: hidden;
