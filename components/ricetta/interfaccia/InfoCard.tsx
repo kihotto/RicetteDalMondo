@@ -37,12 +37,6 @@ interface Props {
 }
 
 export default function ({ icon, value, identifier = '', preText, overrideW }: Props) {
-  const Sizes = {
-    icon: 30,
-    containerH: 30,
-    containerW: 100,
-    text: 12,
-  };
   const renderIcon = () => {
     switch (true) {
       case React.isValidElement(icon):
@@ -51,7 +45,7 @@ export default function ({ icon, value, identifier = '', preText, overrideW }: P
         return (
           <Image
             source={{ uri: icon as string }}
-            style={{ width: Sizes.icon, height: Sizes.icon }}
+            style={{ width: 30, height: 30 }}
             resizeMode="contain"
           />
         );
@@ -59,7 +53,7 @@ export default function ({ icon, value, identifier = '', preText, overrideW }: P
         return (
           <Image
             source={icon as ImageSourcePropType}
-            style={{ width: Sizes.icon, height: Sizes.icon }}
+            style={{ width: 30, height: 30 }}
             resizeMode="contain"
           />
         );
@@ -68,11 +62,10 @@ export default function ({ icon, value, identifier = '', preText, overrideW }: P
     }
   };
   return (
+    /* Container */
     <View
-      className={`flex-row items-center rounded-full border-2 bg-[#f4f4f4]/75 px-0 ${overrideW} overflow-hidden`}
+      className={`h-[30] min-w-[100] flex-1 flex-row items-center gap-1 overflow-hidden rounded-full border-2 ${overrideW ?? ''} bg-[#f4f4f4]/95`}
       style={{
-        height: Sizes.containerH,
-        width: Sizes.containerW,
         shadowColor: '#000000',
         shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.1,
@@ -81,25 +74,37 @@ export default function ({ icon, value, identifier = '', preText, overrideW }: P
       }}>
       {/* icona */}
       <View
-        style={{ height: Sizes.icon, width: Sizes.icon }}
+        style={{ height: 30, width: 30 }}
         className=" mr-1 items-center justify-center rounded-full bg-[rgba(0,0,0,0.4)]">
         {renderIcon()}
       </View>
 
       <View className="w-full flex-1 flex-col">
-        <View className="flex-row items-center gap-1" style={{ flexWrap: 'wrap' }}>
-          <Text style={{ fontSize: Sizes.text, fontWeight: '700', color: 'black' }}>{preText}</Text>
-          <Text style={{ fontSize: Sizes.text, fontWeight: '700', color: 'black' }}>{value}</Text>
+        <View className="flex-row gap-1">
+          <Text
+            style={{ fontSize: 12, fontWeight: '700', color: 'black' }}
+            adjustsFontSizeToFit
+            minimumFontScale={0.7}
+            numberOfLines={1}>
+            {preText}
+          </Text>
+          <Text
+            style={{ fontSize: 12, fontWeight: '700', color: 'black' }}
+            adjustsFontSizeToFit
+            minimumFontScale={0.7}
+            numberOfLines={1}>
+            {value}
+          </Text>
           {identifier !== '' && (
             <Text
-              style={{ fontSize: Sizes.text, fontWeight: '700', color: 'black' }}
-              className="text-sm uppercase">
+              style={{ fontSize: 12, fontWeight: '700', color: 'black' }}
+              className="uppercase"
+              adjustsFontSizeToFit
+              minimumFontScale={0.7}
+              numberOfLines={1}>
               {identifier}
             </Text>
           )}
-
-          {/* NUMBER  */}
-          {/* "min"|"ore"  */}
         </View>
       </View>
     </View>
