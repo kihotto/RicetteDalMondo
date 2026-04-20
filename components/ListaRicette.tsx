@@ -57,17 +57,16 @@ export default function ListaRicette({ country }: ListaRicetteProps) {
   if (loading || !hasNoRecipe) {
     return (
       <View className="flex-1 items-center justify-center">
-        <Text className="text-xl font-bold text-red-600">Lo chef sta cercando il ricettario..</Text>
-        <ActivityIndicator size="large" color={'#ff0000'} />
+        <Text className="text-xl font-bold text-white">Lo chef sta cercando il ricettario..</Text>
+        <ActivityIndicator size="large" color={'#ffffff'} />
       </View>
     );
   }
   if (recipes.length === 0) {
     return (
-      <View className="flex-1 items-center justify-center">
-        <Text className="text-xl font-bold text-red-600">
-          Lo chef non ha trovato il ricettario..
-        </Text>
+      <View className="flex-1 items-center justify-center px-4 ">
+        <Text className="text-xl font-bold text-white ">Lo chef non ha trovato ricette..</Text>
+        <Text className="text-xl font-bold text-white">Prova con un altra Nazione!</Text>
       </View>
     );
   }
