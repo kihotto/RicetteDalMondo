@@ -74,7 +74,7 @@ export default function PaginaRicetta() {
             className="h-full w-full"
             resizeMode="cover"
           />
-          <View className="absolute  bottom-20 left-0 right-0">
+          <View className="absolute  bottom-32 left-0 right-0">
             <InfoRicetta sizeIcons={15} />
           </View>
         </View>
