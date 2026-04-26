@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { View, Text, ImageBackground } from 'react-native';
-import { WebView, WebViewMessageEvent } from 'react-native-webview';
+import { View, ImageBackground } from 'react-native';
 import ListaRicette from '../../components/ListaRicette';
 import Mappamondo from '../../components/Mappamondo';
 

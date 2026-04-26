@@ -71,11 +71,9 @@ const handlePolygonClick = (polygon) => {
   // Rendering
   render();
 
-  // Passa il nome paese a ReactNative o stampa in console
+  // Passa il nome paese a ReactNative
   if (window.ReactNativeWebView) {
     window.ReactNativeWebView.postMessage(countryName);
-  } else {
-    console.log('Cliccato su:', countryName);
   }
 };
 

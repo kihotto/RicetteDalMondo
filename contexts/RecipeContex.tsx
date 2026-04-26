@@ -1,4 +1,5 @@
 import React, { createContext, useContext } from 'react';
+
 export interface Recipe {
   id: string;
   title: string;
@@ -13,9 +14,11 @@ export interface Recipe {
   imageUrl?: string;
   [key: string]: any;
 }
+
 interface RecipeContexType {
   recipe: Recipe | null;
 }
+
 const RecipeContex = createContext<RecipeContexType | undefined>(undefined);
 
 export const RecipeProvider: React.FC<{ recipe: Recipe; children: React.ReactNode }> = ({

@@ -8,6 +8,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 export default function InfoRicetta({ sizeIcons = 20 }: { sizeIcons?: number }) {
   const { recipe } = useRecipe();
+
   const RenderDifficulty = () => {
     switch (recipe?.difficolta) {
       case 'Facile':
@@ -21,6 +22,7 @@ export default function InfoRicetta({ sizeIcons = 20 }: { sizeIcons?: number }) 
         break;
     }
   };
+
   const RenderCosto = () => {
     switch (recipe?.costoPerPersona) {
       case 'Basso':
@@ -34,7 +36,7 @@ export default function InfoRicetta({ sizeIcons = 20 }: { sizeIcons?: number }) 
         break;
     }
   };
-  console.log('RECIPE INFO', recipe?.costoPerPersona);
+
   return (
     <View className="flex-1 flex-col gap-y-2 px-4">
       <View className="mx-2  flex-1 flex-row justify-between">

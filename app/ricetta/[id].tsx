@@ -2,7 +2,6 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import { View, Text, Image, StatusBar, ScrollView, ActivityIndicator } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useEffect, useState } from 'react';
-
 import InfoRicetta from '../../components/ricetta/InfoRicetta';
 import DettagliRicetta from '../../components/ricetta/DettagliRicetta';
 import { RecipeProvider } from '../../contexts/RecipeContex';

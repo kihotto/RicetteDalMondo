@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  ImageBackground,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useRecipes } from '../hooks/useRecipes';
 import { Recipe } from '../contexts/RecipeContex';
@@ -46,6 +39,7 @@ export default function ListaRicette({ country }: ListaRicetteProps) {
       </Text>
     </TouchableOpacity>
   );
+
   if (error) {
     return (
       <View className="flex-1 items-center justify-center">
@@ -62,6 +56,7 @@ export default function ListaRicette({ country }: ListaRicetteProps) {
       </View>
     );
   }
+
   if (recipes.length === 0) {
     return (
       <View className="flex-1 items-center justify-center px-4 ">
