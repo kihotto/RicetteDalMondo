@@ -103,17 +103,6 @@
               </View>
             </View>
           </View>
-
-          {/* Dev Tools */}
-            <View className="mt-6 border-t border-green-800 pt-4">
-              <Text className="mb-3 text-xs font-semibold uppercase tracking-widest text-green-700">
-                Dev Tools
-              </Text>
-              <View className="space-y-2">
-                <ToolItem name="Metro Bundler" description="Bundler React Native" />
-                <ToolItem name="Tailwind CSS" description="Utility-first styling" />
-              </View>
-            </View>
           
           {/* Dev Team Bar */}
           <View className="mx-4 mb-4 mt-8 rounded-lg bg-green-900 p-4">
